@@ -32,8 +32,6 @@ class MainActivity : AppCompatActivity() {
             this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
         )
         drawer_layout.addDrawerListener(toggle)
-
-
     }
 
     private fun getMusic() {
@@ -45,17 +43,16 @@ class MainActivity : AppCompatActivity() {
             .query(musicUri, null, null, null, null)
 
         if (musicCursor != null && musicCursor.moveToFirst()) {
-            //get columns
+            // get columns
             val titleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE)
             val idColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media._ID)
             val artistColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)
-            //add songs to list
+            // add songs to list
             do {
                 val thisId = musicCursor.getLong(idColumn)
                 val thisTitle = musicCursor.getString(titleColumn)
                 val thisArtist = musicCursor.getString(artistColumn)
                 songList.add(Song(thisId, thisTitle, thisArtist))
-
             } while (musicCursor.moveToNext())
         }
 
@@ -69,9 +66,9 @@ class MainActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            1 -> if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                getMusic()
-            }
+            1 ->
+                if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE))
+                    getMusic()
         }
     }
 }
