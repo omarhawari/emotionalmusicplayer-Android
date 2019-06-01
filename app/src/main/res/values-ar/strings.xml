@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Emotional Music Player</string>
     <string name="action_settings">Settings</string>
@@ -14,8 +15,8 @@
     <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
+
     <string name="happy">Happy</string>
     <string name="sad">Sad</string>
     <string name="angry">Angry</string>
-    <string name="title_activity_asd">asd</string>
 </resources>
