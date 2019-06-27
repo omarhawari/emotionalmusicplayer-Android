@@ -1,7 +1,9 @@
 package com.eltrio.emotionalmusicplayer.activities
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.util.Log
@@ -16,16 +18,18 @@ import com.eltrio.emotionalmusicplayer.my_classes.MyFragment
 import com.eltrio.emotionalmusicplayer.my_classes.MyPagerAdapter
 import com.eltrio.emotionalmusicplayer.volley.IVolleyRequest
 import com.eltrio.emotionalmusicplayer.volley.VolleyRequest
-import edu.cmu.pocketsphinx.SpeechRecognizer
+import edu.cmu.pocketsphinx.*
 import kotlinx.android.synthetic.main.activity_main_content.*
 import org.json.JSONArray
 import org.json.JSONObject
 import pub.devrel.easypermissions.EasyPermissions
+import java.io.File
+import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-class MainActivity : MyActivity() {
+class MainActivity : MyActivity(), RecognitionListener {
 
     private val SPEECH_INTENT = 1
     private val STORAGE_PERMESSIONS_REQUEST = 2
@@ -42,6 +46,23 @@ class MainActivity : MyActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         doAll()
+
+//        VolleyRequest.getInstance().post("http://192.168.1.7:80/api/", HashMap<String, String>().apply {
+//            this["age"] = "212"
+//        }, object : IVolleyRequest {
+//            override fun onSuccess(response: JSONObject?) {
+//                Log.e("Response", response.toString())
+//            }
+//
+//            override fun onFail(error: VolleyError?) {
+//                Log.e("Error", error.toString())
+//            }
+//        })
+//        if (EasyPermissions.hasPermissions(this, Manifest.permission.RECORD_AUDIO)) {
+//            runRecognizerSetup()
+//        } else {
+//            EasyPermissions.requestPermissions(this, "", 1, Manifest.permission.RECORD_AUDIO)
+//        }
         getMusic()
     }
 
@@ -114,6 +135,9 @@ class MainActivity : MyActivity() {
                     getMusic()
                 }
             }
+            else -> {
+                if (EasyPermissions.hasPermissions(this, Manifest.permission.RECORD_AUDIO)) runRecognizerSetup()
+            }
         }
     }
 
@@ -139,6 +163,7 @@ class MainActivity : MyActivity() {
                     }
                 }
             }
+            Log.e("Mapped songs", songs.toString())
             VolleyRequest.getInstance().post("http://192.168.1.7:3000/api/lyricsemotion", HashMap(),
                 songs.toString().toByteArray(), object : IVolleyRequest {
                     override fun onSuccess(response: JSONObject?) {
@@ -157,5 +182,89 @@ class MainActivity : MyActivity() {
             )
         }
     }
+
+    @SuppressLint("StaticFieldLeak")
+    private fun runRecognizerSetup() {
+        // Recognizer initialization is a time-consuming and it involves IO,
+        // so we execute it in async task
+        object : AsyncTask<Void, Void, Exception>() {
+            override fun doInBackground(vararg params: Void): Exception? {
+                try {
+                    val assets = Assets(this@MainActivity)
+                    val assetDir = assets.syncAssets()
+                    setupRecognizer(assetDir)
+                } catch (e: IOException) {
+                    return e.apply { printStackTrace() }
+                }
+                return null
+            }
+
+            override fun onPostExecute(result: Exception?) {
+                if (result != null) {
+                    println(result.message)
+                } else {
+                    recognizer!!.startListening(KWS_SEARCH)
+                }
+            }
+        }.execute()
+    }
+
+
+    @Throws(IOException::class)
+    private fun setupRecognizer(assetsDir: File) {
+        recognizer = SpeechRecognizerSetup.defaultSetup()
+            .setAcousticModel(File(assetsDir, "en-us-ptm"))
+            .setDictionary(File(assetsDir, "cmudict-en-us.dict"))
+            // Disable this line if you don't want recognizer to save raw
+            // audio files to app's storage
+            //.setRawLogDir(assetsDir)
+            .recognizer
+        recognizer!!.addListener(this)
+        // Create keyword-activation search.
+        recognizer!!.addKeyphraseSearch(KWS_SEARCH, KEYPHRASE)
+//        recognizer!!.startListening("hi")
+//        // Create your custom grammar-based search
+//        val menuGrammar = File(assetsDir, "mymenu.gram")
+//        recognizer!!.addGrammarSearch(MENU_SEARCH, menuGrammar)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        recognizer?.let {
+            it.cancel()
+            it.shutdown()
+        }
+    }
+
+    override fun onResult(hypothesis: Hypothesis?) {
+        if (hypothesis != null) {
+            Log.e("Here", hypothesis.hypstr)
+        }
+    }
+
+    override fun onPartialResult(hypothesis: Hypothesis?) {
+        if (hypothesis == null)
+            return
+        val text = hypothesis.hypstr
+//        if (text == KEYPHRASE)
+//            switchSearch(MENU_SEARCH)
+//        else {
+        Log.e("Here2", text)
+//        }
+    }
+
+    override fun onTimeout() {
+    }
+
+    override fun onBeginningOfSpeech() {
+    }
+
+    override fun onEndOfSpeech() {
+    }
+
+    override fun onError(p0: java.lang.Exception?) {
+        p0!!.printStackTrace()
+    }
+
 
 }

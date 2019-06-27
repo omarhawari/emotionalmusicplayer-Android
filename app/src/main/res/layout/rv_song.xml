@@ -3,9 +3,15 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:padding="@dimen/padding"
+        android:background="?selectableItemBackground"
+        android:layout_height="wrap_content">
 
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="@dimen/padding"
+            app:srcCompat="@drawable/play"
             android:id="@+id/play"
             android:background="?selectableItemBackgroundBorderless"
             android:layout_width="60dp"
@@ -17,9 +23,10 @@
     <TextView
             android:textSize="@dimen/text_large"
             android:textStyle="bold"
-            android:textColor="@android:color/black"
+            android:textColor="@color/colorPrimary"
             android:text="Song Title"
-            android:layout_margin="@dimen/margin"
+            android:layout_marginTop="@dimen/margin"
+            android:layout_marginStart="@dimen/margin_2"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toEndOf="@+id/play"
             android:id="@+id/song_title"
@@ -28,14 +35,14 @@
 
     <TextView
             android:textStyle="bold"
-            android:textColor="@android:color/black"
+            android:textColor="@color/colorPrimaryDark"
             android:text="Artist"
-            android:layout_margin="@dimen/margin"
+            android:layout_marginTop="@dimen/margin"
+            android:layout_marginStart="@dimen/margin_2"
             app:layout_constraintTop_toBottomOf="@+id/song_title"
             app:layout_constraintStart_toEndOf="@+id/play"
             android:id="@+id/song_artist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
 
 </android.support.constraint.ConstraintLayout>

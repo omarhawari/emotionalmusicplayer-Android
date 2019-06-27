@@ -2,6 +2,7 @@ package com.eltrio.emotionalmusicplayer.volley;
 
 import android.util.Log;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -21,7 +22,7 @@ public class VolleyRequest {
     private static final int MY_VOLLEY_TIME_OUT = 0;
     private static VolleyRequest volleyRequest;
 
-    public static final int RESULT_SUCCESS = 1, RESULT_FAILED = 0;
+    private static final int RESULT_SUCCESS = 1, RESULT_FAILED = 0;
 
     private static RequestQueue mRequestQueue;
 
@@ -43,11 +44,12 @@ public class VolleyRequest {
         }
     }
 
-    public void post(String URL, Map<String, String> map, IVolleyRequest iVolleyRequest) {
+    public void post(String URL, Map<String, String> map, byte[] body, IVolleyRequest iVolleyRequest) {
 
         if (URL.isEmpty()) return;
 
-        Log.e(URL, map.toString());
+        if (map != null)
+            Log.e(URL, map.toString());
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, response -> {
 
@@ -68,8 +70,14 @@ public class VolleyRequest {
                 e.printStackTrace();
             }
         }) {
+            @Override
             protected Map<String, String> getParams() {
                 return map;
+            }
+
+            @Override
+            public byte[] getBody() {
+                return body;
             }
         };
 
