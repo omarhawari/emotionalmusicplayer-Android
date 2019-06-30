@@ -7,50 +7,29 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:showIn="@layout/activity_main_appbar"
-        tools:context=".activities.MainActivity" android:orientation="vertical">
+        tools:context="emotionalmusicplayer.activities.MainActivity" android:orientation="vertical">
 
-    <android.support.design.widget.TabLayout
+    <com.google.android.material.tabs.TabLayout
             android:id="@+id/song_lists_tabs"
             app:tabIndicatorColor="@color/colorAccent"
             android:background="@color/colorPrimary"
-            android:layout_width="match_parent"
+            app:tabMode="scrollable"
             app:tabTextColor="@android:color/white"
-            android:layout_height="wrap_content">
-
-        <android.support.design.widget.TabItem
-                android:text="@string/happy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-        <android.support.design.widget.TabItem
-                android:text="@string/sad"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-        <android.support.design.widget.TabItem
-                android:text="@string/angry"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-        <android.support.design.widget.TabItem
-                android:text="@string/happy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
 
-    </android.support.design.widget.TabLayout>
-
-    <android.support.design.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="0dp">
 
-        <android.support.v4.view.ViewPager
+        <androidx.viewpager.widget.ViewPager
                 android:id="@+id/song_list_view_pager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab"
                 android:layout_margin="@dimen/margin_2"
                 android:layout_width="wrap_content"
@@ -58,7 +37,16 @@
                 android:layout_gravity="bottom|end"
                 app:srcCompat="@drawable/mic"/>
 
-    </android.support.design.widget.CoordinatorLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab2"
+                android:layout_margin="@dimen/margin_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                app:srcCompat="@drawable/mic"/>
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <LinearLayout
             android:orientation="vertical"
@@ -70,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/previous_song"
                     app:srcCompat="@drawable/previous"
                     android:background="?selectableItemBackgroundBorderless"
@@ -78,7 +66,7 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"/>
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/play_pause"
                     app:srcCompat="@drawable/play"
                     android:background="?selectableItemBackgroundBorderless"
@@ -86,7 +74,7 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"/>
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/next_song"
                     android:background="?selectableItemBackgroundBorderless"
                     app:srcCompat="@drawable/next"
@@ -96,7 +84,7 @@
 
         </LinearLayout>
 
-        <android.support.v7.widget.AppCompatSeekBar
+        <androidx.appcompat.widget.AppCompatSeekBar
                 android:id="@+id/seekbar"
                 android:padding="@dimen/margin"
                 android:layout_width="match_parent"
