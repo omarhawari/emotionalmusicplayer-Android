@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.database.sqlite.SQLiteDatabase
-import android.util.Log
 import emotionalmusicplayer.helpers.Data
 import emotionalmusicplayer.models.Song
 import org.json.JSONArray
@@ -12,14 +11,17 @@ import org.json.JSONObject
 
 object Database {
 
-    val DATABASE_NAME = "EMOTIONAL_MUSIC_PLAYER"
+    private const val DATABASE_NAME = "EMOTIONAL_MUSIC_PLAYER"
 
-    val TABLE_SONGS = "SONGS"
-    val COL_ID = "id"
-    val COL_TITLE = "title"
-    val COL_ARTIST = "artist"
-    val COL_LYRICS = "lyrics"
-    val COL_EMOTION = "emotion"
+    private const val TABLE_SONGS = "SONGS"
+    private const val COL_ID = "id"
+    private const val COL_TITLE = "title"
+    private const val COL_ARTIST = "artist"
+    private const val COL_LYRICS = "lyrics"
+    private const val COL_EMOTION = "emotion"
+
+    private const val TABLE_NON_LYRICS = "NON_LYRICS"
+
 
     lateinit var database: SQLiteDatabase
 
@@ -59,9 +61,7 @@ object Database {
         }
     }
 
-    fun getSongs(): ArrayList<Song> {
-        val songs = ArrayList<Song>()
-
+    fun getEmotionalSongs() {
         val query = database.rawQuery("SELECT * FROM $TABLE_SONGS", null)
 
         val col_id = query.getColumnIndex(COL_ID)
@@ -72,7 +72,7 @@ object Database {
         query.moveToFirst()
 
         while (!query.isAfterLast) {
-            songs.add(Song(
+            Data.emotionalSongs.add(Song(
                     query.getInt(col_id).toLong(),
                     query.getString(col_title),
                     query.getString(col_artist),
@@ -84,8 +84,71 @@ object Database {
         }
 
         query.close()
+    }
 
-        return songs
+    fun addNonLyricedSongs(songs: ArrayList<Song>) {
+
+        database.execSQL(
+                "CREATE TABLE IF NOT EXISTS $TABLE_NON_LYRICS ($COL_ID INTEGER PRIMARY KEY)")
+        songs.forEach {
+            val contentValues = ContentValues().apply {
+                put(COL_ID, it.id)
+            }
+
+            val query = database.rawQuery("SELECT * FROM $TABLE_NON_LYRICS WHERE $COL_ID = ${it.id}",
+                                          null)
+            query.moveToFirst()
+            if (query.isAfterLast) {
+                database.insert(TABLE_NON_LYRICS, null, contentValues)
+            } else {
+                database.update(TABLE_NON_LYRICS, contentValues, "$COL_ID = ${it.id}", null)
+            }
+
+            query.close()
+        }
+    }
+
+    fun getNoneLyricedSongs(): ArrayList<Song> {
+
+        val noneLyricedSongs = ArrayList<Song>()
+        Data.songs.forEach {
+            val query = database.rawQuery("SELECT * FROM $TABLE_NON_LYRICS WHERE $COL_ID = ${it.id}", null)
+            query.moveToFirst()
+            if (!query.isAfterLast) {
+                noneLyricedSongs.add(it)
+            }
+
+            query.close()
+        }
+
+        return noneLyricedSongs
+    }
+
+    fun cleanNoneLyricedSongs() {
+        val query = database.rawQuery("SELECT * FROM $TABLE_NON_LYRICS", null)
+        query.moveToFirst()
+        while (!query.isAfterLast) {
+            var id = 0
+            val query2 = database.rawQuery("SELECT * FROM $TABLE_SONGS WHERE $COL_ID = " +
+                                                   "${query.getInt(query.getColumnIndex(COL_ID)).apply {
+                                                       id = this
+                                                   }}", null)
+            query2.moveToFirst()
+            if (!query.isAfterLast) {
+                database.delete(TABLE_NON_LYRICS, "$COL_ID = $id", null)
+            }
+            query2.close()
+            query.moveToNext()
+        }
+        query.close()
+    }
+
+    fun printNoneLyricedSongs() {
+        val query = database.rawQuery("SELECT * FROM $TABLE_SONGS", null)
+        query.moveToFirst()
+        while (!query.isAfterLast) {
+            query.moveToNext()
+        }
     }
 
 }

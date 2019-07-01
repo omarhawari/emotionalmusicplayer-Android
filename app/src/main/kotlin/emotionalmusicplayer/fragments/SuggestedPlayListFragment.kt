@@ -1,11 +1,9 @@
 package emotionalmusicplayer.fragments
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.eltrio.emotionalmusicplayer.R
@@ -28,21 +26,9 @@ class SuggestedPlayListFragment : MyDialogFragment() {
     lateinit var emotionsJSON: JSONObject
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        emotionsJSON = JSONObject(arguments!!.getString("emotion"))
         return inflater.inflate(R.layout.fragment_suggested_playlist, container, false)
     }
-
-//    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-//        emotionsJSON = JSONObject(arguments!!.getString("emotion"))
-//        return AlertDialog.Builder(context!!)
-//            .create().apply {
-//                setView(LayoutInflater.from(context).inflate(R.layout.fragment_suggested_playlist,
-//                                                             null,
-//                                                             false).apply {
-//                    onViewCreated(this, savedInstanceState)
-//                })
-//            }
-//    }
-
 
     override fun setupViews(rootView: View) {
         songsAdapter = SongListAdapter(context!!,
@@ -52,7 +38,7 @@ class SuggestedPlayListFragment : MyDialogFragment() {
                                            override fun onClick(holder: RecyclerView.ViewHolder,
                                                                 position: Int,
                                                                 song: Song) {
-                                               (activity as MainActivity).playSong(song)
+                                               (activity as MainActivity).playSong(song, songsAdapter.data)
                                                dialog.dismiss()
                                            }
                                        })

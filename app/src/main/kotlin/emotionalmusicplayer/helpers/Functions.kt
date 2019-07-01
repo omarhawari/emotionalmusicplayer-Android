@@ -2,12 +2,15 @@ package emotionalmusicplayer.helpers
 
 import android.content.ContentUris
 import android.content.Context
+import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import emotionalmusicplayer.Database
+import emotionalmusicplayer.fragments.SuggestedPlayListFragment
 import emotionalmusicplayer.models.Song
+import emotionalmusicplayer.my_classes.MyActivity
 import org.json.JSONObject
 import kotlin.math.absoluteValue
+
 
 object Functions {
 
@@ -37,14 +40,48 @@ object Functions {
             val list = ArrayList<Song>().apply {
                 addAll(songList)
             }
+
+//            Database.cleanNoneLyricedSongs()
+
             Data.songs.clear()
             Data.songs.addAll(list)
 
             Data.emotionalSongs.clear()
-            Data.emotionalSongs.addAll(Database.getSongs())
+            Database.getEmotionalSongs()
 
+            Data.lyricLessSongs.clear()
+            Data.lyricLessSongs.addAll(Database.getNoneLyricedSongs())
+            Database.addNonLyricedSongs(Data.lyricLessSongs)
+
+            getNewSongs()
             return Data.emotionalSongs
         }
+        return null
+    }
+
+    private fun getNewSongs() {
+        Data.newSongs.clear()
+        Data.newSongs.addAll(Data.songs)
+        Data.emotionalSongs.forEach {
+            val song = findSongById(it.id, Data.newSongs)
+            if (song != null) {
+                Data.newSongs.remove(song)
+            }
+        }
+        Data.newSongs.removeAll(Data.lyricLessSongs)
+    }
+
+    fun deleteFromFirstTheSecond(first: ArrayList<Song>, second: ArrayList<Song>) {
+        second.forEach {
+            val song = findSongById(it.id, first)
+            if (song != null) {
+                first.remove(song)
+            }
+        }
+    }
+
+    fun findSongById(id: Long, songList: ArrayList<Song>): Song? {
+        for (i in 0 until songList.size) if (songList[i].id == id) return songList[i]
         return null
     }
 
@@ -66,39 +103,70 @@ object Functions {
         }
 
         return ArrayList<Song>().apply {
-            Log.e(emotion, size.toString())
             addAll(musicByEmotion.sortedWith(compareBy { it.emotions[emotion] as Double }))
             reverse()
         }
 
     }
 
-    fun getSongsByEmotionsJSON(emotionsJSON: JSONObject): ArrayList<Song> {
-        val songs = ArrayList<Song>()
-
+    private fun getSongsByEmotionsJSON(emotionsJSON: JSONObject): ArrayList<Song> {
         val values = arrayListOf<Float>().apply {
             emotionsJSON.keys().forEach {
-                add((emotionsJSON[it] as Double).toFloat())
+                add((emotionsJSON.getString(it)).toFloat())
             }
         }
 
-        var maxIndex = 0
+        var emotionIndex = 0
         var max = -1F
         values.forEachIndexed { index, value ->
             if (max < value) {
-                maxIndex = index
+                emotionIndex = index
                 max = value
             }
         }
 
         return Data.suggestedSongs.apply {
             clear()
-            addAll(getSongsByEmotion(Data.emotions[maxIndex]).sortedWith(compareBy {
-                ((it.emotions[Data.emotions[maxIndex]] as Double)).absoluteValue.apply {
-                    Log.e("differ", this.toString())
-                }
+            addAll(Data.emotionalSongs.sortedWith(compareBy {
+                //                var difference = 0.0
+//                it.emotions.keys().forEach {
+//                    Log.e("Key1", it.toString())
+//                }
+//                Log.e("Emotions", emotionsJSON.toString())
+//                Log.e("Emotions2", it.emotions.toString())
+//                Data.emotions.forEach { emotion ->
+//                    difference += sqrt(it.emotions.getDouble(emotion) - emotionsJSON.getDouble(emotion))
+//                }
+//                difference
+                (it.emotions[Data.emotions[emotionIndex]] as Double - emotionsJSON.getDouble(Data.emotions[emotionIndex]))
+                    .absoluteValue
             }))
         }
     }
 
+    fun showPredictedList(activity: MyActivity, emotionsJSON: JSONObject) {
+        getSongsByEmotionsJSON(emotionsJSON)
+        val suggestedPlayListFragment = SuggestedPlayListFragment()
+        suggestedPlayListFragment.arguments = Bundle().apply {
+            putString("emotion", emotionsJSON.toString())
+        }
+        suggestedPlayListFragment.show(activity.supportFragmentManager,
+                                       SuggestedPlayListFragment.TAG)
+
+    }
+
+    fun secondsToDuration(totalSeconds: Int): String {
+        val hours = totalSeconds / 3600
+        val minutes = (totalSeconds % 3600) / 60
+        val seconds = totalSeconds % 60
+        return if (hours == 0) {
+            "${addZeros(minutes)}:${addZeros(seconds)}"
+        } else {
+            "${addZeros(hours)}:${addZeros(minutes)}:${addZeros(seconds)}"
+        }
+    }
+
+    private fun addZeros(value: Int): String {
+        return if (value < 10) "0$value" else "$value"
+    }
 }

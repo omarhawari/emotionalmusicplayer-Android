@@ -33,7 +33,8 @@ class SongsListFragment : MyFragment() {
                                        object : MyAdapter.OnClickListener<Song> {
 
             override fun onClick(holder: RecyclerView.ViewHolder, position: Int, song: Song) {
-                (activity as MainActivity).playSong(song)
+                (activity as MainActivity).playSong(song, songsAdapter!!.data)
+                songsAdapter!!.notifyDataSetChanged()
             }
 
         })
@@ -47,5 +48,10 @@ class SongsListFragment : MyFragment() {
 
     fun onMusicLoaded() {
         songsAdapter?.updateData(Functions.getSongsByEmotion(emotion))
+    }
+
+    fun updateData() {
+        songsAdapter?.notifyDataSetChanged()
+
     }
 }

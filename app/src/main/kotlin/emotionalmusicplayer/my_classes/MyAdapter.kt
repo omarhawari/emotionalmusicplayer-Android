@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 
 abstract class MyAdapter<VH : RecyclerView.ViewHolder, I : Any>(
-    protected val context: Context,
-    private val data: ArrayList<I>,
-    private val onClickListener: OnClickListener<I>? = null
+        protected val context: Context,
+        val data: ArrayList<I>,
+        private val onClickListener: OnClickListener<I>? = null
 ) :
     RecyclerView.Adapter<VH>() {
 

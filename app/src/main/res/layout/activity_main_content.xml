@@ -9,6 +9,12 @@
         tools:showIn="@layout/activity_main_appbar"
         tools:context="emotionalmusicplayer.activities.MainActivity" android:orientation="vertical">
 
+    <androidx.appcompat.widget.AppCompatImageView
+            android:visibility="gone"
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"/>
+
     <com.google.android.material.tabs.TabLayout
             android:id="@+id/song_lists_tabs"
             app:tabIndicatorColor="@color/colorAccent"
@@ -30,6 +36,7 @@
                 android:layout_height="match_parent"/>
 
         <com.getbase.floatingactionbutton.FloatingActionsMenu
+                android:layout_margin="@dimen/margin"
                 android:id="@+id/fab_menu"
                 android:layout_width="match_parent"
                 app:fab_addButtonSize="normal"
@@ -68,53 +75,171 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"/>
 
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_camera"
+                    app:fab_title="Speech"
+                    app:fab_icon="@drawable/camera"
+                    app:fab_colorNormal="@color/sec_fab"
+                    app:fab_colorPressed="@color/sec_fab_pressed"
+                    app:fab_size="mini"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"/>
+
 
         </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <LinearLayout
-            android:orientation="vertical"
-            android:gravity="center"
+    <androidx.cardview.widget.CardView
+            app:cardElevation="30dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
         <LinearLayout
-                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/previous_song"
-                    app:srcCompat="@drawable/previous"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:layout_margin="@dimen/margin"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"/>
+            <LinearLayout
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:id="@+id/song_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/play_pause"
-                    app:srcCompat="@drawable/play"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:layout_margin="@dimen/margin"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"/>
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:gravity="center"
+                        android:id="@+id/title_song"
+                        android:layout_marginStart="@dimen/margin"
+                        android:layout_marginEnd="@dimen/margin"
+                        android:text="Song Title"
+                        android:scrollHorizontally="true"
+                        android:ellipsize="marquee"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:focusable="true"
+                        android:singleLine="true"
+                        android:focusableInTouchMode="true"
+                        android:layout_marginTop="@dimen/margin"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="26sp"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"/>
 
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/next_song"
-                    android:background="?selectableItemBackgroundBorderless"
-                    app:srcCompat="@drawable/next"
-                    android:layout_margin="@dimen/margin"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"/>
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/artist"
+                        android:text="Song Title"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="16sp"
+                        android:scrollHorizontally="true"
+                        android:ellipsize="marquee"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:focusable="true"
+                        android:singleLine="true"
+                        android:focusableInTouchMode="true"
+                        android:layout_marginStart="@dimen/margin"
+                        android:layout_marginEnd="@dimen/margin"
+                        android:layout_marginTop="@dimen/margin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/repeat_toggle"
+                        app:srcCompat="@drawable/repeat"
+                        android:tint="@android:color/darker_gray"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:layout_margin="@dimen/margin_2"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"/>
+
+                <View android:layout_width="0dp"
+                      android:layout_weight="1"
+                      android:layout_height="match_parent"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/previous_song"
+                        app:srcCompat="@drawable/previous"
+                        app:tint="@android:color/darker_gray"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:layout_margin="@dimen/margin"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/play_pause"
+                        app:srcCompat="@drawable/play"
+                        app:tint="@android:color/darker_gray"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:layout_margin="@dimen/margin"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/next_song"
+                        app:tint="@android:color/darker_gray"
+                        android:background="?selectableItemBackgroundBorderless"
+                        app:srcCompat="@drawable/next"
+                        android:layout_margin="@dimen/margin"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"/>
+
+                <View android:layout_width="0dp"
+                      android:layout_weight="1"
+                      android:layout_height="match_parent"/>
+
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/shuffle_toggle"
+                        android:tint="@android:color/darker_gray"
+                        app:srcCompat="@drawable/shuffle"
+                        android:background="?selectableItemBackgroundBorderless"
+                        android:layout_margin="@dimen/margin_2"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent"
+                          android:gravity="center"
+                          android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/progress"
+                        android:layout_margin="8dp"
+                        android:text="-:-"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                <androidx.appcompat.widget.AppCompatSeekBar
+                        android:id="@+id/seekbar"
+                        android:padding="@dimen/margin"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/total_duration"
+                        android:layout_margin="8dp"
+                        android:text="-:-"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
 
         </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatSeekBar
-                android:id="@+id/seekbar"
-                android:padding="@dimen/margin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-    </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 </LinearLayout>

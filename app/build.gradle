@@ -53,6 +53,8 @@ dependencies {
 
     implementation 'com.getbase:floatingactionbutton:1.10.1'
 
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.16'
+
     implementation project(':pocketsphinx-android-5prealpha-release')
 
     testImplementation 'junit:junit:4.12'

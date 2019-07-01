@@ -7,12 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.LinearLayout
 import android.widget.SeekBar
 import com.eltrio.emotionalmusicplayer.R
 import com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
+import emotionalmusicplayer.helpers.Functions
+import emotionalmusicplayer.my_classes.MyActivity
 import emotionalmusicplayer.my_classes.MyDialogFragment
-import kotlinx.android.synthetic.main.fragment_emotional_equalizer.view.*
+import kotlinx.android.synthetic.main.fragment_emotional_equalizer.*
+import org.json.JSONObject
 
 @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class EmotionalEqualizerFragment : MyDialogFragment() {
@@ -21,6 +23,11 @@ class EmotionalEqualizerFragment : MyDialogFragment() {
         val TAG = "EmotionalEqualizerFragment"
     }
 
+    lateinit var chartFragment: EmotionalChartFragment
+
+    val map = HashMap<VerticalSeekBar, Int>()
+
+
     val seekBars = arrayListOf<VerticalSeekBar>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -28,18 +35,40 @@ class EmotionalEqualizerFragment : MyDialogFragment() {
     }
 
     override fun setupViews(rootView: View) {
-        seekBars.addAll(arrayOf(rootView.excited, rootView.happy, rootView.neutral, rootView.sad, rootView.stressed))
+        seekBars.addAll(arrayOf(excited, happy, neutral, sad, stressed))
+
+        seekBars.forEach {
+
+            map[it] = 2000
+
+            it.max = 10000
+
+            it.progress = 2000
+        }
+        chartFragment = EmotionalChartFragment().apply {
+            arguments = Bundle().apply { putString("emotion", getEmotionJSON().toString()) }
+        }
+
+        childFragmentManager.beginTransaction()
+            .replace(R.id.fragment_place_holder, chartFragment).commit()
+    }
+
+    fun getEmotionJSON(): JSONObject {
+        return JSONObject().apply {
+            put("excited", (excited.progress.toFloat()/ 10000F))
+            put("happy", happy.progress.toFloat() / 10000F)
+            put("neutral", neutral.progress.toFloat() / 10000F)
+            put("sad", sad.progress.toFloat() / 10000F)
+            put("stressed", stressed.progress.toFloat() / 10000F)
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        dialog.window.setLayout(MATCH_PARENT, WRAP_CONTENT)
+        dialog.window.setLayout(MATCH_PARENT, MATCH_PARENT)
     }
 
     override fun setClickListeners(rootView: View) {
-
-        val map = HashMap<VerticalSeekBar, Int>()
-
         seekBars.forEach {
 
             map[it] = 2000
@@ -78,6 +107,8 @@ class EmotionalEqualizerFragment : MyDialogFragment() {
                             map[it2] = it2.progress
                         }
                     }
+
+                    chartFragment.updateChart(getEmotionJSON())
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -89,5 +120,11 @@ class EmotionalEqualizerFragment : MyDialogFragment() {
                 }
             })
         }
+
+        predict.setOnClickListener {
+            dismiss()
+            Functions.showPredictedList(activity!! as MyActivity, getEmotionJSON())
+        }
+
     }
 }
