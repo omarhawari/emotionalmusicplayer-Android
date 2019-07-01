@@ -1,17 +1,20 @@
 package emotionalmusicplayer.fragments
 
-import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.LinearLayout
 import android.widget.SeekBar
-import androidx.appcompat.app.AlertDialog
 import com.eltrio.emotionalmusicplayer.R
 import com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
 import emotionalmusicplayer.my_classes.MyDialogFragment
 import kotlinx.android.synthetic.main.fragment_emotional_equalizer.view.*
 
+@Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class EmotionalEqualizerFragment : MyDialogFragment() {
 
     companion object {
@@ -20,25 +23,17 @@ class EmotionalEqualizerFragment : MyDialogFragment() {
 
     val seekBars = arrayListOf<VerticalSeekBar>()
 
-//    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-//        return inflater.inflate(R.layout.fragment_emotional_equalizer, container, false).apply {
-//            layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-//        }
-//    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return AlertDialog.Builder(context!!)
-            .create().apply {
-                setView(LayoutInflater.from(context).inflate(R.layout.fragment_emotional_equalizer,
-                                                             null,
-                                                             false).apply {
-                    onViewCreated(this, savedInstanceState)
-                })
-            }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_emotional_equalizer, container, false)
     }
 
     override fun setupViews(rootView: View) {
         seekBars.addAll(arrayOf(rootView.excited, rootView.happy, rootView.neutral, rootView.sad, rootView.stressed))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        dialog.window.setLayout(MATCH_PARENT, WRAP_CONTENT)
     }
 
     override fun setClickListeners(rootView: View) {

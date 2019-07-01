@@ -3,4 +3,8 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="main_fab">#ef5350</color>
+    <color name="main_fab_pressed">#e53935</color>
+    <color name="sec_fab">#f06292</color>
+    <color name="sec_fab_pressed">#ec407a</color>
 </resources>

@@ -15,6 +15,7 @@ import com.eltrio.emotionalmusicplayer.R
 import emotionalmusicplayer.Database
 import emotionalmusicplayer.fragments.EmotionalEqualizerFragment
 import emotionalmusicplayer.fragments.SongsListFragment
+import emotionalmusicplayer.fragments.SuggestedPlayListFragment
 import emotionalmusicplayer.helpers.Data
 import emotionalmusicplayer.helpers.Data.BASE_URL
 import emotionalmusicplayer.helpers.Functions
@@ -24,6 +25,7 @@ import emotionalmusicplayer.my_classes.MyFragment
 import emotionalmusicplayer.my_classes.MyPagerAdapter
 import emotionalmusicplayer.volley.IVolleyRequest
 import emotionalmusicplayer.volley.VolleyRequest
+import kotlinx.android.synthetic.main.activity_main_appbar.*
 import kotlinx.android.synthetic.main.activity_main_content.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -45,6 +47,7 @@ class MainActivity : MyActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setSupportActionBar(toolbar)
         Database.init(this)
         doAll()
         getMusic()
@@ -52,11 +55,11 @@ class MainActivity : MyActivity() {
 
     override fun setupViews() {
         song_list_view_pager.adapter = MyPagerAdapter(supportFragmentManager, fragments.apply {
-            add(SongsListFragment())
-            add(SongsListFragment())
-            add(SongsListFragment())
-            add(SongsListFragment())
-            add(SongsListFragment())
+            add(SongsListFragment().apply { arguments = Bundle().apply { putString("emotion", "excited") } })
+            add(SongsListFragment().apply { arguments = Bundle().apply { putString("emotion", "happy") } })
+            add(SongsListFragment().apply { arguments = Bundle().apply { putString("emotion", "neutral") } })
+            add(SongsListFragment().apply { arguments = Bundle().apply { putString("emotion", "sad") } })
+            add(SongsListFragment().apply { arguments = Bundle().apply { putString("emotion", "stressed") } })
         }, ArrayList<String>().apply {
             Data.Emotions.values().forEach {
                 add(it.toString())
@@ -99,7 +102,8 @@ class MainActivity : MyActivity() {
             }
         })
 
-        fab.setOnClickListener {
+        fab_speech.setOnClickListener {
+            fab_menu.collapse()
             val speechIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
             speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.ENGLISH)
@@ -110,17 +114,16 @@ class MainActivity : MyActivity() {
             }
         }
 
-
-        fab2.setOnClickListener {
+        fab_calibrator.setOnClickListener {
+            fab_menu.collapse()
             val dialogFragment = EmotionalEqualizerFragment()
             dialogFragment.show(supportFragmentManager, EmotionalEqualizerFragment.TAG)
         }
+
     }
 
     fun playSong(song: Song) {
-        if (mediaPlayer.isPlaying) {
-            mediaPlayer.reset()
-        }
+        mediaPlayer.reset()
 
         try {
             mediaPlayer.setDataSource(this, song.uri)
@@ -152,15 +155,16 @@ class MainActivity : MyActivity() {
                         .post("http://$BASE_URL:3000/api/speechemotion", null,
                               json.toString().toByteArray(), object : IVolleyRequest {
                                 override fun onSuccess(response: JSONObject?) {
-                                    Log.e("Response", response!!.toString())
-                                    val jsonResponse = JSONObject(response.toString())
-                                    jsonResponse.keys().forEach {
-                                        Log.e(it, jsonResponse[it].toString())
+                                    Functions.getSongsByEmotionsJSON(response!!.getJSONObject("emotion"))
+                                    val suggestedPlayListFragment = SuggestedPlayListFragment()
+                                    suggestedPlayListFragment.arguments = Bundle().apply {
+                                        putString("emotion", response.getString("emotion"))
                                     }
+                                    suggestedPlayListFragment.show(supportFragmentManager,
+                                                                   SuggestedPlayListFragment.TAG)
                                 }
 
                                 override fun onFail(error: VolleyError?) {
-                                    Log.e("Response", error!!.message + "")
                                 }
                             })
                 }
@@ -181,9 +185,8 @@ class MainActivity : MyActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.main, menu)
-        return super.onCreateOptionsMenu(menu)
+        menuInflater.inflate(R.menu.main, menu)
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -197,16 +200,15 @@ class MainActivity : MyActivity() {
 
     private fun getMusic() {
         if (EasyPermissions.hasPermissions(
-                this,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-        ) {
+                        this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             Functions.getMusic(this)
 
             fragments.forEach {
                 (it as SongsListFragment).onMusicLoaded()
             }
+            return
             val songs = JSONObject()
             Data.songs.forEach { it ->
                 val artist = it.artist

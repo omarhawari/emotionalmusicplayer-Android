@@ -29,22 +29,47 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab"
-                android:layout_margin="@dimen/margin_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+        <com.getbase.floatingactionbutton.FloatingActionsMenu
+                android:id="@+id/fab_menu"
+                android:layout_width="match_parent"
+                app:fab_addButtonSize="normal"
+                app:fab_addButtonColorNormal="@color/colorAccent"
+                app:fab_addButtonColorPressed="@color/colorAccent"
                 android:layout_gravity="bottom|end"
-                app:srcCompat="@drawable/mic"/>
+                android:layout_height="match_parent">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab2"
-                android:layout_margin="@dimen/margin_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|start"
-                app:srcCompat="@drawable/mic"/>
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_text"
+                    app:fab_title="Text"
+                    app:fab_icon="@drawable/keyboard"
+                    app:fab_size="mini"
+                    app:fab_colorNormal="@color/sec_fab"
+                    app:fab_colorPressed="@color/sec_fab_pressed"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"/>
 
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_calibrator"
+                    app:fab_title="Calibrator"
+                    app:fab_icon="@drawable/calibrator"
+                    app:fab_colorNormal="@color/sec_fab"
+                    app:fab_colorPressed="@color/sec_fab_pressed"
+                    android:layout_width="40dp"
+                    app:fab_size="mini"
+                    android:layout_height="40dp"/>
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_speech"
+                    app:fab_title="Speech"
+                    app:fab_icon="@drawable/mic"
+                    app:fab_colorNormal="@color/sec_fab"
+                    app:fab_colorPressed="@color/sec_fab_pressed"
+                    app:fab_size="mini"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"/>
+
+
+        </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

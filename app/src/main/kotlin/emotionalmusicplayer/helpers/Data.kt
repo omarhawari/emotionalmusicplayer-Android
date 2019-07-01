@@ -6,14 +6,18 @@ import emotionalmusicplayer.models.Song
 object Data {
 
     enum class Emotions {
-        HAPPY,
-        SAD,
-        STRESSED,
         EXCITED,
-        NEUTRAL
+        HAPPY,
+        NEUTRAL,
+        SAD,
+        STRESSED
     }
 
+    val emotions = arrayOf("excited", "happy", "neutral", "sad", "stressed")
+
     val songs = ArrayList<Song>()
+    val emotionalSongs = ArrayList<Song>()
+    val suggestedSongs = ArrayList<Song>()
 
     fun getSongUriById(id: Int): Uri? {
         var uri: Uri? = null

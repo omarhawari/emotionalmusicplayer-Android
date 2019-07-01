@@ -111,7 +111,6 @@ class MainActivity : MyActivity(), RecognitionListener {
                         },
                             json.toString().toByteArray(), object : IVolleyRequest {
                                 override fun onSuccess(response: JSONObject?) {
-                                    Log.e("Response", response!!.toString())
                                 }
 
                                 override fun onFail(error: VolleyError?) {

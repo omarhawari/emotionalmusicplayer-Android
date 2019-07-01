@@ -3,8 +3,11 @@ package emotionalmusicplayer.helpers
 import android.content.ContentUris
 import android.content.Context
 import android.provider.MediaStore
+import android.util.Log
+import emotionalmusicplayer.Database
 import emotionalmusicplayer.models.Song
 import org.json.JSONObject
+import kotlin.math.absoluteValue
 
 object Functions {
 
@@ -34,12 +37,68 @@ object Functions {
             val list = ArrayList<Song>().apply {
                 addAll(songList)
             }
-            return list.apply {
-                Data.songs.clear()
-                Data.songs.addAll(this)
-            }
+            Data.songs.clear()
+            Data.songs.addAll(list)
+
+            Data.emotionalSongs.clear()
+            Data.emotionalSongs.addAll(Database.getSongs())
+
+            return Data.emotionalSongs
         }
         return null
+    }
+
+    fun getSongsByEmotion(emotion: String): ArrayList<Song> {
+        val musicByEmotion = ArrayList<Song>()
+
+        Data.emotionalSongs.forEach { it ->
+            val emotionsJSON = it.emotions
+            val emotionVal = (emotionsJSON[emotion] as Double).toFloat()
+            var isDominant = true
+            emotionsJSON.keys().forEach {
+                if (emotion != it && emotionVal < (emotionsJSON[it] as Double).toFloat()) {
+                    isDominant = false
+                }
+            }
+            if (isDominant) {
+                musicByEmotion.add(it)
+            }
+        }
+
+        return ArrayList<Song>().apply {
+            Log.e(emotion, size.toString())
+            addAll(musicByEmotion.sortedWith(compareBy { it.emotions[emotion] as Double }))
+            reverse()
+        }
+
+    }
+
+    fun getSongsByEmotionsJSON(emotionsJSON: JSONObject): ArrayList<Song> {
+        val songs = ArrayList<Song>()
+
+        val values = arrayListOf<Float>().apply {
+            emotionsJSON.keys().forEach {
+                add((emotionsJSON[it] as Double).toFloat())
+            }
+        }
+
+        var maxIndex = 0
+        var max = -1F
+        values.forEachIndexed { index, value ->
+            if (max < value) {
+                maxIndex = index
+                max = value
+            }
+        }
+
+        return Data.suggestedSongs.apply {
+            clear()
+            addAll(getSongsByEmotion(Data.emotions[maxIndex]).sortedWith(compareBy {
+                ((it.emotions[Data.emotions[maxIndex]] as Double)).absoluteValue.apply {
+                    Log.e("differ", this.toString())
+                }
+            }))
+        }
     }
 
 }
