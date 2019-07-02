@@ -16,6 +16,7 @@
             android:layout_height="300dp"/>
 
     <com.google.android.material.tabs.TabLayout
+            app:tabGravity="center"
             android:id="@+id/song_lists_tabs"
             app:tabIndicatorColor="@color/colorAccent"
             android:background="@color/colorPrimary"
@@ -46,6 +47,7 @@
                 android:layout_height="match_parent">
 
             <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:visibility="gone"
                     android:id="@+id/fab_text"
                     app:fab_title="Text"
                     app:fab_icon="@drawable/keyboard"
@@ -96,6 +98,7 @@
             android:layout_height="wrap_content">
 
         <LinearLayout
+                android:animateLayoutChanges="true"
                 android:orientation="vertical"
                 android:gravity="center"
                 android:layout_width="match_parent"

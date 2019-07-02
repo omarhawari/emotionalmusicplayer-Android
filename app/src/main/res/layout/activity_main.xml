@@ -1,27 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<RelativeLayout
+        android:animateLayoutChanges="true"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="emotionalmusicplayer.activities.MainActivity">
+        android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-            android:layout_height="wrap_content"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            app:elevation="0dp"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:layout_height="match_parent"
+            tools:context="emotionalmusicplayer.activities.MainActivity">
 
-        <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
+        <com.google.android.material.appbar.AppBarLayout
+                android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:popupTheme="@style/AppTheme.PopupOverlay"/>
+                app:elevation="0dp"
+                android:theme="@style/AppTheme.AppBarOverlay">
 
-    </com.google.android.material.appbar.AppBarLayout>
+            <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="?attr/colorPrimary"
+                    app:popupTheme="@style/AppTheme.PopupOverlay">
 
-    <include layout="@layout/activity_main_content"/>
+                <LinearLayout android:gravity="center_vertical"
+                              android:layout_width="match_parent"
+                              android:layout_height="match_parent">
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+                    <androidx.appcompat.widget.AppCompatImageView
+                            app:srcCompat="@drawable/app_icon"
+                            android:layout_width="46dp"
+                            android:layout_height="46dp"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_marginStart="@dimen/margin"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            app:textAllCaps="true"
+                            android:padding="@dimen/padding"
+                            android:textColor="@android:color/white"
+                            android:gravity="center_vertical"
+                            android:text="@string/app_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+
+                </LinearLayout>
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <include layout="@layout/activity_main_content"/>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <RelativeLayout
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:id="@+id/loading"
+            android:background="#30000000"
+            android:layout_height="match_parent">
+
+        <androidx.cardview.widget.CardView
+                app:cardCornerRadius="20dp"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            <ProgressBar android:layout_width="wrap_content"
+                         android:layout_margin="@dimen/margin_2"
+                         android:layout_height="wrap_content"/>
+
+        </androidx.cardview.widget.CardView>
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

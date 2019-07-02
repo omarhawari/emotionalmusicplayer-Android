@@ -16,6 +16,7 @@
             app:layout_constraintStart_toStartOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
+                app:tint="@color/colorAccent"
                 android:id="@+id/play_icon"
                 android:clickable="true"
                 android:focusable="true"

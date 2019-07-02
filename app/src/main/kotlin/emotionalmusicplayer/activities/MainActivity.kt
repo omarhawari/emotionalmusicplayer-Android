@@ -35,6 +35,7 @@ import emotionalmusicplayer.my_classes.MyFragment
 import emotionalmusicplayer.my_classes.MyPagerAdapter
 import emotionalmusicplayer.volley.IVolleyRequest
 import emotionalmusicplayer.volley.VolleyRequest
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main_appbar.*
 import kotlinx.android.synthetic.main.activity_main_content.*
 import org.json.JSONArray
@@ -258,16 +259,20 @@ class MainActivity : MyActivity() {
 
         image.setImageBitmap(bitmap)
 
+        loading.visibility = View.VISIBLE
+
         VolleyRequest.getInstance()
             .post("$BASE_URL/api/imageemotion", null, JSONObject().apply {
                 put("image", encoded)
             }.toString().toByteArray(), object : IVolleyRequest {
                 override fun onSuccess(response: JSONObject?) {
                     Functions.showPredictedList(this@MainActivity, response!!.getJSONObject("emotion"))
+                    loading.visibility = View.GONE
                 }
 
                 override fun onFail(error: VolleyError?) {
-
+                    loading.visibility = View.GONE
+                    Toast.makeText(this@MainActivity, "Some error happened.", Toast.LENGTH_LONG).show()
                 }
             })
 
@@ -354,15 +359,23 @@ class MainActivity : MyActivity() {
                     val speech = result[0]
                     val json = JSONObject()
                     json.put("speech", speech)
+
+                    loading.visibility = View.VISIBLE
+
                     VolleyRequest.getInstance()
                         .post("$BASE_URL/api/speechemotion", null,
                               json.toString().toByteArray(), object : IVolleyRequest {
                             override fun onSuccess(response: JSONObject?) {
                                 Functions.showPredictedList(this@MainActivity,
                                                             response!!.getJSONObject("emotion"))
+                                loading.visibility = View.GONE
+
                             }
 
                             override fun onFail(error: VolleyError?) {
+                                loading.visibility = View.GONE
+                                Toast.makeText(this@MainActivity, "Some error happened.", Toast.LENGTH_LONG).show()
+
                             }
                         })
                 }
@@ -445,9 +458,14 @@ class MainActivity : MyActivity() {
                             }
                         }
 
+                        loading.visibility = View.VISIBLE
+
+
                         VolleyRequest.getInstance().post("$BASE_URL/api/lyricsemotion", HashMap(),
                                                          songs.toString().toByteArray(), object : IVolleyRequest {
                             override fun onSuccess(response: JSONObject?) {
+                                loading.visibility = View.GONE
+
                                 Database.addSongs(response!!)
                                 Database.getEmotionalSongs()
                                 Functions.deleteFromFirstTheSecond(Data.newSongs, Data.emotionalSongs)
@@ -458,6 +476,8 @@ class MainActivity : MyActivity() {
                             }
 
                             override fun onFail(error: VolleyError?) {
+                                loading.visibility = View.GONE
+                                Toast.makeText(this@MainActivity, "Some error happened.", Toast.LENGTH_LONG).show()
 
                             }
                         })
