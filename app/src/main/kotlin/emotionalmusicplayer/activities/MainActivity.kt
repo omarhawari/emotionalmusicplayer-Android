@@ -36,7 +36,6 @@ import emotionalmusicplayer.my_classes.MyPagerAdapter
 import emotionalmusicplayer.volley.IVolleyRequest
 import emotionalmusicplayer.volley.VolleyRequest
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main_appbar.*
 import kotlinx.android.synthetic.main.activity_main_content.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -215,6 +214,17 @@ class MainActivity : MyActivity() {
             }
         }
 
+        show_lyrics.setOnClickListener {
+            if (mediaPlayer.isPlaying) {
+                lyrics_layout.visibility = View.VISIBLE
+                lyrics.text = song?.lyrics
+            }
+        }
+
+        close.setOnClickListener {
+            lyrics_layout.visibility = View.GONE
+        }
+
         mediaPlayer.setOnCompletionListener {
             if (shuffleToggle == 0) {
                 when (repeatToggle) {
@@ -386,7 +396,14 @@ class MainActivity : MyActivity() {
 
                     try {
                         val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-                        sendPhoto(bitmap)
+                        crop_layout.visibility = View.VISIBLE
+                        cropper.setImageBitmap(bitmap)
+                        crop.setOnClickListener {
+                            crop_layout.visibility = View.GONE
+                            sendPhoto(cropper.croppedImage)
+                        }
+//                        cropper.setOnCropImageCompleteListener { view, _ ->
+//                        }
                     } catch (e: java.lang.Exception) {
                         e.printStackTrace()
                     }

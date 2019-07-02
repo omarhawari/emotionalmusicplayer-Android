@@ -76,7 +76,70 @@
 
         </androidx.cardview.widget.CardView>
 
-
     </RelativeLayout>
+
+    <LinearLayout
+            android:background="#30000000"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone"
+            android:id="@+id/crop_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <com.theartofdev.edmodo.cropper.CropImageView
+                android:id="@+id/cropper"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
+
+        <Button android:layout_width="wrap_content"
+                android:text="Crop"
+                android:backgroundTint="@color/colorPrimaryDark"
+                android:textColor="@android:color/white"
+                android:id="@+id/crop"
+                android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/lyrics_layout"
+            android:background="#90000000"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                app:srcCompat="@drawable/close"
+                android:id="@+id/close"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?selectableItemBackgroundBorderless"
+                android:layout_margin="@dimen/margin_2"
+                android:layout_width="42dp"
+                android:layout_height="42dp"/>
+
+        <androidx.core.widget.NestedScrollView
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:padding="@dimen/padding"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:textFontWeight="20"
+                    android:textColor="@android:color/white"
+                    android:id="@+id/lyrics"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+
+        </androidx.core.widget.NestedScrollView>
+
+
+    </LinearLayout>
 
 </RelativeLayout>

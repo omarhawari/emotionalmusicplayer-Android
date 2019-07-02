@@ -31,6 +31,6 @@ object Data {
         return uri
     }
 
-    val BASE_URL = /*"192.168.43.138"*/  "http://192.168.1.7:3000"
+    val BASE_URL = /*"192.168.43.138"*/  "http://192.168.43.138:3000"
 
 }
